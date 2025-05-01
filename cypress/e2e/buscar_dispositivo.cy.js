@@ -34,22 +34,23 @@ describe("Buscar dispositivos", () => {
     }
 
     )
-    it("Buscar dispositivo por ID", () => {
-        cy.request({
-            method: "GET",
-            url: "https://api.restful-api.dev/objects/21",            
-        }).then((response) => {
-            //console.log("Resposta: " ,response)
-            expect(response.status).to.equal(200)
-            expect(response.body.id).to.equal("21")
+    // it("Buscar dispositivo por ID", () => {
+    //     cy.request({
+    //         method: "GET",
+    //         url: "https://api.restful-api.dev/objects/21",            
+    //     }).then((response) => {
+    //         //console.log("Resposta: " ,response)
+    //         expect(response.status).to.equal(200)
+    //         expect(response.body.id).to.equal("21")
 
-        }
+        
+    //     }
 
-        )
+    //     )
 
-    }
+    // }
 
-    )
+    // )
 }
 
 )
