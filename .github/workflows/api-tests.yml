@@ -22,5 +22,8 @@ jobs:
       - name: Instalar dependências
         run: npm install
 
+      - name: Baixar binário do Cypress
+        run: npx cypress install
+
       - name: Rodar testes de API com Cypress
         run: npx cypress run
