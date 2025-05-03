@@ -52,7 +52,7 @@ jobs:
         if: success() || failure()
         run: |
           mkdir -p renamed_videos
-          for file in cypress/videos/*/.mp4; do
+          for file in cypress/videos/*.mp4; do
             base=$(basename "$file")
             cp "$file" "renamed_videos/${{ steps.vars.outputs.timestamp }}_$base"
           done
