@@ -27,3 +27,42 @@ jobs:
 
       - name: Rodar testes de API com Cypress
         run: npx cypress run
+
+      - name: Configurar credenciais da AWS
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: sa-east-1
+
+      - name: Definir timestamp
+        id: vars
+        run: echo "timestamp=$(date +%Y-%m-%d_%H-%M-%S)" >> $GITHUB_OUTPUT
+
+      - name: Renomear screenshots com timestamp
+        if: success() || failure()
+        run: |
+          mkdir -p renamed_screenshots
+          for file in cypress/screenshots/*/.png; do
+            base=$(basename "$file")
+            cp "$file" "renamed_screenshots/${{ steps.vars.outputs.timestamp }}_$base"
+          done
+
+      - name: Renomear vídeos com timestamp
+        if: success() || failure()
+        run: |
+          mkdir -p renamed_videos
+          for file in cypress/videos/*/.mp4; do
+            base=$(basename "$file")
+            cp "$file" "renamed_videos/${{ steps.vars.outputs.timestamp }}_$base"
+          done
+
+      - name: Enviar screenshots renomeados ao S3
+        if: success() || failure()
+        run: |
+          aws s3 cp renamed_screenshots s3://cypress-api-qalabs/screenshots/ --recursive
+
+      - name: Enviar vídeos renomeados ao S3
+        if: success() || failure()
+        run: |
+          aws s3 cp renamed_videos s3://cypress-api-qalabs/videos/ --recursive
