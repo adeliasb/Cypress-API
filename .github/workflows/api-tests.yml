@@ -26,7 +26,18 @@ jobs:
         run: npx cypress install
 
       - name: Rodar testes de API com Cypress
-        run: npx cypress run
+        run: npx cypress run --spec "cypress/e2e/api/*/.cy.js"
+
+      - name: Gerar relatório Mochawesome
+        run: |
+          npx mochawesome-merge cypress/reports/*.json > cypress/reports/merged-report.json
+          npx marge cypress/reports/merged-report.json -f report --reportDir cypress/reports/html
+
+      - name: Copiar log de API para reports
+        if: success() || failure()
+        run: |
+          mkdir -p cypress/reports/logs
+          cp cypress/logs/api-log.json cypress/reports/logs/api-log.json || echo "Log não encontrado"
 
       - name: Configurar credenciais da AWS
         uses: aws-actions/configure-aws-credentials@v2
@@ -43,26 +54,18 @@ jobs:
         if: success() || failure()
         run: |
           mkdir -p renamed_screenshots
-          for file in cypress/screenshots/*/.png; do
+          for file in cypress/screenshots//.png; do
             base=$(basename "$file")
             cp "$file" "renamed_screenshots/${{ steps.vars.outputs.timestamp }}_$base"
-          done
+          done || echo "Nenhuma screenshot encontrada"
 
-      - name: Renomear vídeos com timestamp
+      - name: Enviar screenshots ao S3
         if: success() || failure()
         run: |
-          mkdir -p renamed_videos
-          for file in cypress/videos/*.mp4; do
-            base=$(basename "$file")
-            cp "$file" "renamed_videos/${{ steps.vars.outputs.timestamp }}_$base"
-          done
+          aws s3 cp renamed_screenshots s3://cypress-api-qalabs/screenshots/ --recursive || echo "Nenhum arquivo para enviar"
 
-      - name: Enviar screenshots renomeados ao S3
+      - name: Enviar relatórios e logs ao S3
         if: success() || failure()
         run: |
-          aws s3 cp renamed_screenshots s3://cypress-api-qalabs/screenshots/ --recursive
-
-      - name: Enviar vídeos renomeados ao S3
-        if: success() || failure()
-        run: |
-          aws s3 cp renamed_videos s3://cypress-api-qalabs/videos/ --recursive
+          aws s3 cp cypress/reports/html s3://cypress-api-qalabs/relatorios/ --recursive
+          aws s3 cp cypress/reports/logs s3://cypress-api-qalabs/logs/ --recursive
