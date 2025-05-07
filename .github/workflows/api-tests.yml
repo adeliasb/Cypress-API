@@ -28,11 +28,6 @@ jobs:
       - name: Rodar testes de API com Cypress
         run: npx cypress run --spec "cypress/e2e/**/*.cy.js"
 
-      - name: Gerar relatório Mochawesome
-        run: |
-          npx mochawesome-merge cypress/reports/*.json > cypress/reports/merged-report.json
-          npx marge cypress/reports/merged-report.json -f report --reportDir cypress/reports/html
-
       - name: Copiar log de API para reports
         if: success() || failure()
         run: |
