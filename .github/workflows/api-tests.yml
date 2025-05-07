@@ -59,8 +59,7 @@ jobs:
         run: |
           aws s3 cp renamed_screenshots s3://cypress-api-qalabs/screenshots/ --recursive || echo "Nenhum arquivo para enviar"
 
-      - name: Enviar relatórios e logs ao S3
+      - name: Enviar logs ao S3
         if: success() || failure()
         run: |
-          aws s3 cp cypress/reports/html s3://cypress-api-qalabs/relatorios/ --recursive
-          aws s3 cp cypress/reports/logs s3://cypress-api-qalabs/logs/ --recursive
+          aws s3 cp cypress/reports/logs s3://cypress-api-qalabs/logs/ --recursive || echo "Nenhum log para enviar"
