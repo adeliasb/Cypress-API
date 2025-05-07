@@ -26,7 +26,7 @@ jobs:
         run: npx cypress install
 
       - name: Rodar testes de API com Cypress
-        run: npx cypress run --spec "cypress/e2e/api/*/.cy.js"
+        run: npx cypress run --spec "cypress/e2e/**/*.cy.js"
 
       - name: Gerar relatório Mochawesome
         run: |
