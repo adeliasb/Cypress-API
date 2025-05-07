@@ -9,6 +9,10 @@ describe("Buscar dispositivos", () => {
             //console.log("Resposta: " ,response)
             expect(response.status).to.equal(200)
             expect(response.body.id).to.equal("7")
+            cy.writeFile('cypress/reports/logs/api-log.json1', {
+                status: response.status,
+                body: response.body
+            })
 
         }
 
