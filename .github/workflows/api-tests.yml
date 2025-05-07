@@ -34,7 +34,7 @@ jobs:
           mkdir -p cypress/reports/logs
           cp cypress/logs/api-log.json cypress/reports/logs/api-log.json || echo "Log não encontrado"
 
-      - name: Configurar credenciais da AWS - GitHub Actions
+      - name: Configurar credenciais da AWS
         uses: aws-actions/configure-aws-credentials@v2
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
